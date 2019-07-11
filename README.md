@@ -2,10 +2,9 @@
 
 Does nothing useful but to demonstrate the use of a GDNative script.
 
-**Note:** this has been tested with Godot 3.0.3.
-It uses the old Nativescript 1.0; better use 1.1 in the future.
+**Note:** this has been tested with Godot 3.1 and uses nativescript-1.1
 
-Further information can be found at https://docs.godotengine.org/en/3.0/tutorials/plugins/gdnative/gdnative-cpp-example.html
+Further information can be found at https://docs.godotengine.org/en/3.1/tutorials/plugins/gdnative/gdnative-cpp-example.html
 
 ## Directory structure
 
@@ -35,13 +34,12 @@ Then open the shell / the Visual Studio Native Tools prompt, and do:
 ```
 cd godot-cpp
 scons -c      <--- cleans up any previous build
-(path/to/godot --gdnative-generate-json-api godot_api.json   <--- build up-to-date bindings. ONLY NEEDED for godot != 3.0)
-scons -j8 p={windows|x11} headers=godot_headers generate_bindings=yes
+(path/to/godot --gdnative-generate-json-api godot_api.json   <--- build up-to-date bindings. ONLY NEEDED if you know what you are doing)
+scons -j8 p={windows|x11} headers=godot_headers generate_bindings=yes bits=64
 ```
 
 Note that you may want to update godot-cpp to the current master, especially when using a more recent
-Godot version than 3.0. Note that when *not* using the `nativescript-1.0` branch, the code will not
-compile any more, requiring small changes. These are documented in the latest godot docs.
+Godot version than 3.1.
 
 ## Building
 
@@ -51,7 +49,7 @@ After having prepared everything, type into a Visual Studio Native Tools prompt:
 scons p={windows|x11}
 ```
 
-This should create `bin\win64\libgdexample.lib`
+This should create `bin\win64\libgdexample.dll`
 
 ### Visual Studio project generation
 If you're using Visual Studio under windows, you can create a `.sln` solution file using
@@ -80,4 +78,5 @@ C:\Users\flo\demo> \path\to\godot\bin\godot.windows.tools.64.exe -e
 OpenGL ES 3.0 Renderer: GeForce GTX 1080 Ti/PCIe/SSE2
 Construct gdnative interface
 MyClass ctor    <-- yayy :)
+MyClass::_init()
 ```

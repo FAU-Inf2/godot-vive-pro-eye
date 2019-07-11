@@ -8,8 +8,8 @@
 
 namespace godot {
 
-class MyClass : public godot::GodotScript<MeshInstance> {
-	GODOT_CLASS(MyClass)
+class MyClass : public godot::MeshInstance {
+	GODOT_CLASS(MyClass, godot::MeshInstance)
 
 private:
 	float time_passed = 0.f;
@@ -23,6 +23,7 @@ public:
 
 	MyClass();
 	~MyClass();
+	void _init();
 
 	void _process(float delta);
 	void bark(godot::String str);

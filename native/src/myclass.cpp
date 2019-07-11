@@ -13,6 +13,14 @@ void MyClass::_register_methods() {
 	register_property("time_delta", &MyClass::time_delta, 0.5f, GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_NONE);
 }
 
+
+void MyClass::_init()
+{
+	// This method must be present for nativescript 1.1, even if it does
+	// nothing. Otherwise, Godot will crash without any message at startup.
+	cout << "MyClass::_init()" << endl;
+}
+
 MyClass::MyClass() {
 	cout << "MyClass ctor" << endl;
 }
@@ -34,7 +42,7 @@ std::string to_string(const godot::String& str)
 }
 void MyClass::bark(godot::String str)
 {
-	cout << "woof " << to_string(str) << "woof" << endl;
+	cout << "woof " << ::to_string(str) << "woof" << endl;
 }
 
 void MyClass::_process(float delta) {
@@ -47,12 +55,12 @@ void MyClass::_process(float delta) {
 		if (state/2 == 0)
 		{
 			cout << "disco" << endl;
-			owner->set_material_override(disco_material);
+			set_material_override(disco_material);
 		}
 		else
 		{
 			cout << "party" << endl;
-			owner->set_material_override(party_material);
+			set_material_override(party_material);
 		}
 
 		state = (state+1) % 4;
