@@ -66,7 +66,8 @@ elif env['platform'] == "windows":
 
     env.Append(CCFLAGS = ['-DWIN32', '-D_WIN32', '-D_WINDOWS', '-W3', '-GR', '-D_CRT_SECURE_NO_WARNINGS', "/std:c++17"])
     if env['target'] in ('debug', 'd'):
-        env.Append(CCFLAGS = ['-EHsc', '-D_DEBUG', '-MDd'])
+        env.Append(CCFLAGS = ['-EHsc', '-Zi', '-D_DEBUG', '-MDd'])
+        env.Append(LINKFLAGS = ['/DEBUG'])
     else:
         env.Append(CCFLAGS = ['-O2', '-EHsc', '-DNDEBUG', '-MD'])
 
@@ -134,6 +135,10 @@ sources = [
 ]
 
 library = env.SharedLibrary(target=env['target_path'] + env['target_name'] , source=sources)
+
+if env['platform'] == "windows":
+	buildtarget = [s for s in library if str(s).endswith('dll')]
+	msvs = env.MSVSProject(target="project"+env['MSVSPROJECTSUFFIX'], srcs=sources, incs=Glob("src/*.h",strings=True)+Glob("src/*.hpp",strings=True), buildtarget=buildtarget, variant="debug|x64", cmdargs="p=windows target=debug")
 
 Default(library)
 

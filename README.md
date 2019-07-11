@@ -53,6 +53,19 @@ scons p={windows|x11}
 
 This should create `bin\win64\libgdexample.lib`
 
+### Visual Studio project generation
+If you're using Visual Studio under windows, you can create a `.sln` solution file using
+
+```
+scons p=windows project.sln
+```
+
+When you open this file in Visual Studio, everything should work. Note, however, that the
+IntelliSense completion and error display will likely not work. While you can "Build -> Build
+solution", the error list in case of errors will contain a lot of spam. To resolve this,
+click on the "Build + IntelliSense" box on the "Error List" bottom pane, and select "Build only"
+instead to only see errors from the actual compiling phase.
+
 ## Running
 
 If the build has succeeded, the project can be opened in godot. Either run
