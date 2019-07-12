@@ -1,16 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://MyClass.gdns" type="Script" id=1]
 
 [sub_resource type="CubeMesh" id=1]
-
-[sub_resource type="SpatialMaterial" id=2]
-albedo_color = Color( 0.96875, 0, 1, 1 )
-roughness = 0.0
-
-[sub_resource type="SpatialMaterial" id=3]
-albedo_color = Color( 0, 1, 0.953125, 1 )
-roughness = 0.0
 
 [node name="Spatial" type="Spatial"]
 
@@ -18,8 +10,6 @@ roughness = 0.0
 mesh = SubResource( 1 )
 material/0 = null
 script = ExtResource( 1 )
-disco_material = SubResource( 2 )
-party_material = SubResource( 3 )
 
 [node name="Camera" type="Camera" parent="."]
 transform = Transform( 1, 0, 0, 0, 0.845788, 0.533518, 0, -0.533518, 0.845788, 0, 2.48536, 3.63962 )

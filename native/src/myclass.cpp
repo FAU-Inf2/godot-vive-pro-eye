@@ -2,23 +2,43 @@
 #include <string>
 #include "myclass.h"
 
+#include "SRanipal.h"
+#include "SRanipal_Eye.h"
+#include "SRanipal_Enums.h"
+
 using namespace godot;
 using namespace std;
+using namespace ViveSR;
 
 void MyClass::_register_methods() {
 	register_method("_process", &MyClass::_process);
-	register_method("bark", &MyClass::bark);
-	register_property("disco_material", &MyClass::disco_material, Ref<Material>(), GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Material");
-	register_property("party_material", &MyClass::party_material, Ref<Material>(), GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_RESOURCE_TYPE, "Material");
-	register_property("time_delta", &MyClass::time_delta, 0.5f, GODOT_METHOD_RPC_MODE_DISABLED, GODOT_PROPERTY_USAGE_DEFAULT, GODOT_PROPERTY_HINT_NONE);
 }
 
 
 void MyClass::_init()
 {
-	// This method must be present for nativescript 1.1, even if it does
-	// nothing. Otherwise, Godot will crash without any message at startup.
 	cout << "MyClass::_init()" << endl;
+
+	if (ViveSR::anipal::Eye::IsViveProEye())
+	{
+			ViveSR::Error err = static_cast<ViveSR::Error>(ViveSR::anipal::Initial(ViveSR::anipal::Eye::ANIPAL_TYPE_EYE, NULL));
+			switch (err)
+			{
+				case ViveSR::Error::WORK:
+					cout << "Successfully initialized SRanipal." << endl;
+					init_success = true;
+					break;
+				case ViveSR::Error::RUNTIME_NOT_FOUND:
+					cout << "Failed to initialize SRanipal: Runtime not found." << endl;
+					break;
+				default:
+					cout << "Failed to initialize SRanipal. Unknown error code " << err << endl;
+			}
+	}
+	else
+	{
+		cout << "Error: HMD is not a Vive Pro Eye" << endl;
+	}
 }
 
 MyClass::MyClass() {
@@ -29,40 +49,30 @@ MyClass::~MyClass() {
 	cout << "MyClass dtor" << endl;
 }
 
-std::string to_string(const godot::String& str)
+void MyClass::update_eye_data()
 {
-	if (char* data = str.alloc_c_string())
+	if (init_success)
 	{
-		std::string result(data);
-		godot::api->godot_free(data);
-		return result;
+		int result = ViveSR::anipal::Eye::GetEyeData(&eye_data);
+		data_valid = (result == ViveSR::Error::WORK);
 	}
 	else
-		throw runtime_error("Failed to alloc_c_string()");
-}
-void MyClass::bark(godot::String str)
-{
-	cout << "woof " << ::to_string(str) << "woof" << endl;
+	{
+		data_valid = false;
+	}
 }
 
 void MyClass::_process(float delta) {
-	time_passed += delta;
+	update_eye_data();
 	
-	if (time_passed >= time_delta)
+	if (data_valid)
 	{
-		time_passed = 0;
-
-		if (state/2 == 0)
-		{
-			cout << "disco" << endl;
-			set_material_override(disco_material);
-		}
-		else
-		{
-			cout << "party" << endl;
-			set_material_override(party_material);
-		}
-
-		state = (state+1) % 4;
+		cout <<
+			eye_data.verbose_data.combined.eye_data.gaze_direction_normalized.x << "," <<
+			eye_data.verbose_data.combined.eye_data.gaze_direction_normalized.y << "," <<
+			eye_data.verbose_data.combined.eye_data.gaze_direction_normalized.z << "  |  " <<
+			eye_data.verbose_data.combined.eye_data.gaze_origin_mm.x << "," <<
+			eye_data.verbose_data.combined.eye_data.gaze_origin_mm.y << "," <<
+			eye_data.verbose_data.combined.eye_data.gaze_origin_mm.z << endl;
 	}
 }

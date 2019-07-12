@@ -1,6 +1,18 @@
 #!python
 import os, subprocess
 
+# first check whether the SRanipal SDK has been installed correctly.
+
+sranipal_bin_found = os.path.isdir("./SRanipal_SDK/bin")
+sranipal_inc_found = os.path.isdir("./SRanipal_SDK/include")
+sranipal_lib_found = os.path.isdir("./SRanipal_SDK/lib")
+
+if not (sranipal_bin_found and sranipal_inc_found and sranipal_lib_found):
+	print("Error: The SRanipal SDK was not installed correctly. (bin %sfound, include %sfound, lib %sfound)."  % ("" if sranipal_bin_found else "NOT ","" if sranipal_inc_found else "NOT ","" if sranipal_lib_found else "NOT "))
+	print("Follow the instructions in SRanipal_SDK/README.txt and try again.")
+	quit()
+
+
 opts = Variables([], ARGUMENTS)
 
 # Gets the standard flags CC, CCX, etc.
@@ -37,6 +49,10 @@ if env['p'] != '':
 if env['platform'] == '':
     print("No valid target platform selected.")
     quit();
+
+if env['platform'] != 'windows' or bits != 64:
+	print("For now, only 64bit windows is supported. Sorry.")
+	quit()
 
 # Check our platform specifics
 if env['platform'] == "osx":
@@ -122,10 +138,25 @@ cpp_library += '.' + str(bits)
 
 
 
-# make sure our binding library is properly includes
-env.Append(CPPPATH=['.', godot_headers_path, cpp_bindings_path + 'include/', cpp_bindings_path + 'include/core/', cpp_bindings_path + 'include/gen/']) # TODO: add your include paths here. (or above, if they are windows-only)
-env.Append(LIBPATH=[cpp_bindings_path + 'bin/'])
-env.Append(LIBS=[cpp_library]) # TODO: add your libraries here
+# make sure our binding library is properly included
+env.Append(CPPPATH=[
+	'.',
+	godot_headers_path,
+	cpp_bindings_path + 'include/',
+	cpp_bindings_path + 'include/core/',
+	cpp_bindings_path + 'include/gen/',
+	"SRanipal_SDK/include"
+]) # TODO: add your include paths here. (or above, if they are windows-only)
+
+env.Append(LIBPATH=[
+	cpp_bindings_path + 'bin/',
+	"SRanipal_SDK/lib"
+])
+
+env.Append(LIBS=[
+	cpp_library,
+	"SRanipal"
+]) # TODO: add your libraries here
 
 # tweak this if you want to use different folders, or more folders, to store your source code in.
 #env.Append(CPPPATH=['src/'])
@@ -135,12 +166,13 @@ sources = [
 ]
 
 library = env.SharedLibrary(target=env['target_path'] + env['target_name'] , source=sources)
+install_sranipal = env.Install(env['target_path'], ["./SRanipal_SDK/bin/%s" % f for f in ["HTC_License", "libHTC_License.dll", "nanomsg.dll", "SRanipal.dll", "SRWorks_Log.dll", "ViveSR_Client.dll"]])
 
 if env['platform'] == "windows":
 	buildtarget = [s for s in library if str(s).endswith('dll')]
 	msvs = env.MSVSProject(target="project"+env['MSVSPROJECTSUFFIX'], srcs=sources, incs=Glob("src/*.h",strings=True)+Glob("src/*.hpp",strings=True), buildtarget=buildtarget, variant="debug|x64", cmdargs="p=windows target=debug")
 
-Default(library)
+Default([library, install_sranipal])
 
 # Generates help for the -h scons option.
 Help(opts.GenerateHelpText(env))
