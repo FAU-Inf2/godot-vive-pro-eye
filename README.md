@@ -1,10 +1,8 @@
-# GDNative demo
+# Godot driver for the HTC Vive Pro Eye equipment
 
-Does nothing useful but to demonstrate the use of a GDNative script.
+This project provides a Godot driver for the HTC Vive Pro Eye. It uses the
+[SRanipal framework](https://developer.vive.com/resources/knowledgebase/vive-sranipal-sdk/).
 
-**Note:** this has been tested with Godot 3.1 and uses nativescript-1.1
-
-Further information can be found at https://docs.godotengine.org/en/3.1/tutorials/plugins/gdnative/gdnative-cpp-example.html
 
 ## Directory structure
 
@@ -25,6 +23,11 @@ Further information can be found at https://docs.godotengine.org/en/3.1/tutorial
 
 Install the **scons** build system.
 
+Download and extract the
+[SRanipal SDK](https://developer.vive.com/resources/knowledgebase/vive-sranipal-sdk/)'s
+`bin\`, `lib\` and `include\` directories to `native\SRanipal_SDK`. For details, refer
+to [the README in that directory](native/SRanipal_SDK/README.txt).
+
 ### Preparation
 
 Run `git submodule update --init --recursive` to initialize the submodules.
@@ -35,18 +38,15 @@ Then open the shell / the Visual Studio Native Tools prompt, and do:
 cd godot-cpp
 scons -c      <--- cleans up any previous build
 (path/to/godot --gdnative-generate-json-api godot_api.json   <--- build up-to-date bindings. ONLY NEEDED if you know what you are doing)
-scons -j8 p={windows|x11} headers=godot_headers generate_bindings=yes bits=64
+scons -j8 p=windows headers=godot_headers generate_bindings=yes bits=64
 ```
 
-Note that you may want to update godot-cpp to the current master, especially when using a more recent
-Godot version than 3.1.
-
-## Building
+### Building
 
 After having prepared everything, type into a Visual Studio Native Tools prompt:
 
 ```
-scons p={windows|x11}
+scons p=windows
 ```
 
 This should create `bin\win64\libgdexample.dll`
@@ -70,13 +70,24 @@ If the build has succeeded, the project can be opened in godot. Either run
 `path/to/godot -e`, while being in the repo's main directory, or open the
 project from godot's GUI.
 
-The following output should appear in the Godot console log window (not neccessarily
-the "Log" tab inside godot, but the proper terminal window).
+You may need to install the SRanipal runtime, which is available from the SDK download
+page. You may need to perform a calibration first.
 
-```
-C:\Users\flo\demo> \path\to\godot\bin\godot.windows.tools.64.exe -e
-OpenGL ES 3.0 Renderer: GeForce GTX 1080 Ti/PCIe/SSE2
-Construct gdnative interface
-MyClass ctor    <-- yayy :)
-MyClass::_init()
-```
+The demo application shows a scene with some objects, and three colored spheres.
+These spheres follow your gaze and correspond to your right, left, and combined gaze.
+If you close one of the eyes, the corresponding sphere's size gets gradually smaller.
+
+# License
+
+The code offered in this repository is licensed under the MIT license. Note, however,
+that by linking in the SRanipal SDK, you have to agree to their license agreement,
+which may have an impact on the conditions you are allowed to redistribute the resulting
+binaries under.
+
+# Documentation
+
+Sorry, currrently you can only read the comments in the [header file](native/src/myclass.h).
+
+For use in Godot, the method names are the same. Just create a _Node_-object and attach
+the _MyClass.gdns_ script to it. Then you can call `ThatObject.update_eye_data()` and
+`ThatObject.get_gaze_direction(0)` from your own GDscripts.
