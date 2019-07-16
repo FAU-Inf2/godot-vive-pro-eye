@@ -14,6 +14,7 @@ This project provides a Godot driver for the HTC Vive Pro Eye. It uses the
 |
 `-- native                         C++ source files for the binary plugin
     |-- godot-cpp                  Godot C++ bindings
+    |-- SRanipal_SDK               Placeholder directory for the SRanipal files
     `-- src                        The actual source code
 ```
 
