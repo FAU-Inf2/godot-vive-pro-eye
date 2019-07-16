@@ -23,6 +23,10 @@ This project provides a Godot driver for the HTC Vive Pro Eye. It uses the
 
 Install the **scons** build system.
 
+Install the **boost** libraries to `C:\local\boost_1_69_0`. If you choosea
+different directory, adjust the `windows_boost_path` variable in `SConstruct`
+first.
+
 Download and extract the
 [SRanipal SDK](https://developer.vive.com/resources/knowledgebase/vive-sranipal-sdk/)'s
 `bin\`, `lib\` and `include\` directories to `native\SRanipal_SDK`. For details, refer

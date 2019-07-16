@@ -1,10 +1,16 @@
 #include <iostream>
 #include <string>
+
 #include "myclass.h"
 
 #include "SRanipal.h"
 #include "SRanipal_Eye.h"
 #include "SRanipal_Enums.h"
+
+#include <boost/lockfree/spsc_queue.hpp>
+#include <thread>
+#include <chrono>
+
 
 using namespace godot;
 using namespace std;
@@ -34,7 +40,7 @@ void MyClass::_init()
 			{
 				case ViveSR::Error::WORK:
 					cout << "Successfully initialized SRanipal." << endl;
-					init_success = true;
+					poll_thread = std::thread(&MyClass::poll, this);
 					break;
 				case ViveSR::Error::RUNTIME_NOT_FOUND:
 					cout << "Failed to initialize SRanipal: Runtime not found." << endl;
@@ -57,23 +63,49 @@ MyClass::~MyClass() {
 	cout << "MyClass dtor" << endl;
 }
 
-bool MyClass::update_eye_data()
+void MyClass::poll()
 {
-	if (init_success)
-	{
-		int prev_frame = eye_data.frame_sequence;
-		int result = ViveSR::anipal::Eye::GetEyeData(&eye_data);
-		data_valid = (result == ViveSR::Error::WORK);
+	ViveSR::anipal::Eye::EyeData poll_eye_data;
 
-		cout << "frame delta: " << eye_data.frame_sequence - prev_frame << endl;
-	}
-	else
+	while (true)
 	{
-		data_valid = false;
+		std::this_thread::sleep_for(1ms);
+
+		int prev_frame = poll_eye_data.frame_sequence;
+		int result = ViveSR::anipal::Eye::GetEyeData(&poll_eye_data);
+		if (result == ViveSR::Error::WORK)
+		{
+			int delta = poll_eye_data.frame_sequence - prev_frame;
+
+			if (delta > 0)
+			{
+				if (delta > 1)
+					cout << "frame delta: " << poll_eye_data.frame_sequence - prev_frame << endl;
+
+				bool success = queue.push(poll_eye_data);
+
+				if (!success)
+					cout << "ringbuf overflow" << endl;
+			}
+		}
 	}
-	return data_valid;
 }
 
+bool MyClass::next_eye_data()
+{
+	bool success = queue.pop(eye_data);
+	if (success)
+		data_valid = true;
+	return success;
+}
+
+bool MyClass::update_eye_data()
+{
+	bool success = false;
+	while (next_eye_data())
+		success = true;
+	return success;
+}
 
 const ViveSR::anipal::Eye::SingleEyeData* MyClass::get_eye(int eye)
 {

@@ -8,28 +8,52 @@
 #include "SRanipal.h"
 #include "SRanipal_Eye.h"
 
+#include <boost/lockfree/spsc_queue.hpp>
+#include <optional>
+#include <thread>
+
 namespace godot {
 
 class MyClass : public godot::Node {
 	GODOT_CLASS(MyClass, godot::Node)
 
 private:
-	bool init_success = false;
 	bool data_valid = false;
-
 	ViveSR::anipal::Eye::EyeData eye_data;
-
+	/** gives the left, combined or right eye data for eye = -1/0/1 */
 	const ViveSR::anipal::Eye::SingleEyeData* get_eye(int eye);
+
+	boost::lockfree::spsc_queue<ViveSR::anipal::Eye::EyeData, boost::lockfree::capacity<2>> queue;
+	// queue MUST be listed before poll_thread. It is important that poll_thread
+	// gets destructed PRIOR to queue!
+	std::thread poll_thread; // required for getting the full 120Hz from the HMD
+
+	void poll();
 
 public:
 	static void _register_methods();
 	
-	/** Must be called each frame before get_eyeball_position() or
-	    get_gaze_direction() is called. Returns true on success or
-		false on error. In the error case, the get_* methods return
-		garbage data.
+	/** Updates the internal state to the latest eye data available.
+		Returns true if the eye data was updated or false if no new data
+		was available.
+
+		One of update_eye_data() or next_eye_data() must be called each frame
+		before get_eyeball_position() or get_gaze_direction() is called. Returns
+		true on success or false on error. In the error case, the get_* methods
+		return garbage data.
 	*/
 	bool update_eye_data();
+
+	/** Updates the internal state to the next eye data in the ringbuffer, if
+		available, and returns true in that case. Does nothing and returns false
+		otherwise.
+
+		One of update_eye_data() or next_eye_data() must be called each frame
+		before get_eyeball_position() or get_gaze_direction() is called. Returns
+		true on success or false on error. In the error case, the get_* methods
+		return garbage data.
+	*/
+	bool next_eye_data();
 
 	/** returns the eye gaze origin in meters.
 	    The Vector3 returned follows the godot convention, i.e.

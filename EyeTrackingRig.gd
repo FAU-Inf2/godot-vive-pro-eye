@@ -20,5 +20,3 @@ func _process(delta):
 		$RightMarker.translation = $EyeTracker.get_gaze_direction(1) + $EyeTracker.get_eyeball_position(1)
 		$RightMarker.scale = vec3($EyeTracker.get_eye_openness(1))
 		$CombinedMarker.translation = $EyeTracker.get_gaze_direction(0)
-	else:
-		print("error updating eye data!")
