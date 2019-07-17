@@ -82,13 +82,6 @@ The demo application shows a scene with some objects, and three colored spheres.
 These spheres follow your gaze and correspond to your right, left, and combined gaze.
 If you close one of the eyes, the corresponding sphere's size gets gradually smaller.
 
-# License
-
-The code offered in this repository is licensed under the MIT license. Note, however,
-that by linking in the SRanipal SDK, you have to agree to their license agreement,
-which may have an impact on the conditions you are allowed to redistribute the resulting
-binaries under.
-
 # Documentation
 
 Sorry, currrently you can only read the comments in the [header file](native/src/myclass.h).
@@ -96,3 +89,35 @@ Sorry, currrently you can only read the comments in the [header file](native/src
 For use in Godot, the method names are the same. Just create a _Node_-object and attach
 the _MyClass.gdns_ script to it. Then you can call `ThatObject.update_eye_data()` and
 `ThatObject.get_gaze_direction(0)` from your own GDscripts.
+
+# License
+
+The code offered in this repository is licensed under the MIT license. Note, however,
+that by linking in the SRanipal SDK, you have to agree to their license agreement,
+which may have an impact on the conditions you are allowed to redistribute the resulting
+binaries under.
+
+The license header that's part of every source file is reproduced below:
+
+Copyright (c) 2019 Lehrstuhl für Informatik 2,
+Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU)
+Author: Florian Jung (florian.jung@fau.de)
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
