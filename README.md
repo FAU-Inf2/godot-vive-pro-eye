@@ -101,6 +101,7 @@ The license header that's part of every source file is reproduced below:
 
 Copyright (c) 2019 Lehrstuhl für Informatik 2,
 Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU)
+
 Author: Florian Jung (florian.jung@fau.de)
 
 Permission is hereby granted, free of charge, to any person obtaining
