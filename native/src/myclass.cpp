@@ -47,6 +47,7 @@ using namespace ViveSR;
 void MyClass::_register_methods() {
 	#define reg(name) register_method(#name, &MyClass::name)
 	reg(update_eye_data);
+	reg(next_eye_data);
 	reg(get_eyeball_position);
 	reg(get_gaze_direction);
 	reg(is_user_present);
@@ -169,7 +170,7 @@ bool MyClass::is_user_present()
 
 double MyClass::get_timestamp()
 {
-	return eye_data.no_user;
+	return eye_data.timestamp;
 }
 
 double MyClass::get_gaze_distance()
