@@ -116,6 +116,7 @@ public:
 	MyClass();
 	~MyClass();
 	void _init();
+	void _ready();
 };
 
 }

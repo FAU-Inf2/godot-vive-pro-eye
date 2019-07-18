@@ -55,12 +55,15 @@ void MyClass::_register_methods() {
 	reg(get_gaze_distance);
 	reg(get_pupil_size);
 	reg(get_eye_openness);
+	reg(_ready);
 }
 
 
-void MyClass::_init()
+void MyClass::_init() {}
+
+void MyClass::_ready()
 {
-	cout << "MyClass::_init()" << endl;
+	cout << "MyClass::_ready()" << endl;
 
 	if (ViveSR::anipal::Eye::IsViveProEye())
 	{
